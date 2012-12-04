@@ -1,0 +1,24 @@
+#[link(name = "algorithms",
+       vers = "0.1",
+       uuid = "F5F3EB93-54C8-4530-802B-9F3DB4188A45",
+       url = "https://github.com/stevej/rust-algorithms")];
+
+#[comment = "Rust algorithms library"];
+#[license = "Apache 2"];
+#[crate_type = "lib"];
+
+#[allow(unused_imports)];
+#[allow(implicit_copies)];
+#[allow(deprecated_pattern)];
+
+#[allow(structural_records)];
+#[allow(deprecated_mode)];
+#[allow(non_implicitly_copyable_typarams)];
+
+extern mod std;
+
+pub mod algorithms;
+pub mod tree;
+pub mod heap;
+
+mod test_tree;
