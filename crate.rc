@@ -20,5 +20,7 @@ extern mod std;
 pub mod algorithms;
 pub mod tree;
 pub mod heap;
+pub mod lazy;
+
 
 mod test_tree;
