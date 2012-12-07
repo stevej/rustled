@@ -79,7 +79,7 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
   pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
     match self {
       Empty_ => {(None, self)}
-      PairingHeap_(heap) => {(Some(heap.head), self.mergePairs(heap.rest))}
+      PairingHeap_(heap) => {(Some(heap.head), self.merge_pairs(heap.rest))}
     }
   }
 
@@ -103,10 +103,10 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
     }
   }
 
-  pure fn mergePairs(heaps: @List<PairingHeap<E>>) -> PairingHeap<E> {
+  pure fn merge_pairs(heaps: @List<PairingHeap<E>>) -> PairingHeap<E> {
     match heaps {
       // Why are @-signs required for pattern matching here?
-      @Cons(a, @Cons(b, xs)) => {a.merge(b).merge(self.mergePairs(xs))}
+      @Cons(a, @Cons(b, xs)) => {a.merge(b).merge(self.merge_pairs(xs))}
       @Cons(elem, @Nil) => {elem}
       @Nil => {Empty()}
     }
