@@ -24,7 +24,7 @@ pub trait Heap<E: Copy Eq Ord> {
   // of Rust is too limited to make that work.
 
   // returns true if the Heap is empty.
-  pure fn is_empty() -> bool;
+  pure fn is_empty(&self) -> bool;
 
   // returns a new Heap with the element inserted.
   pure fn insert(elem: E) -> PairingHeap<E>;
@@ -65,11 +65,8 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
 }
 
 impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
-  pure fn is_empty() -> bool {
-    match self {
-      Empty_ => { return true; }
-      _ => {return false; }
-    };
+  pure fn is_empty(&self) -> bool {
+    *self == Empty_
   }
 
   pure fn insert(e: E) -> PairingHeap<E> {
