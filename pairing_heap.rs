@@ -20,20 +20,17 @@ pub enum PairingHeap<E: Copy Eq Ord> {
 }
 
 pub trait Heap<E: Copy Eq Ord> {
-  // I would really love for these to return Heaps but my knowledge
-  // of Rust is too limited to make that work.
-
   // returns true if the Heap is empty.
   pure fn is_empty(&self) -> bool;
 
   // returns a new Heap with the element inserted.
-  pure fn insert(elem: E) -> PairingHeap<E>;
+  pure fn insert(elem: E) -> self;
 
   // returns the minimum element without a modified heap
   pure fn find_min() -> Option<E>;
 
   // returns the minimum element and a new Heap without that element.
-  pure fn delete_min() -> (Option<E>, PairingHeap<E>);
+  pure fn delete_min() -> (Option<E>, self);
 }
 
 
