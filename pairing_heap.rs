@@ -2,15 +2,6 @@ use core::cmp::{Eq, Ord};
 use std::list;
 use std::list::{List, Cons, Nil};
 
-// I would really love for these to return Heaps but my knowledge
-// of Rust is too limited to make that work.
-pub trait Heap<E: Copy Eq Ord> {
-  pure fn is_empty() -> bool;
-  pure fn insert(elem: E) -> PairingHeap<E>;
-  pure fn find_min() -> (Option<E>, PairingHeap<E>);
-  pure fn delete_min() -> (Option<E>, PairingHeap<E>);
-}
-
 /**
  * A purely functional Pairing Heap [FSST86]
  *
@@ -27,6 +18,16 @@ pub enum PairingHeap<E: Copy Eq Ord> {
     rest: @List<PairingHeap<E>>
   })
 }
+
+pub trait Heap<E: Copy Eq Ord> {
+  // I would really love for these to return Heaps but my knowledge
+  // of Rust is too limited to make that work.
+  pure fn is_empty() -> bool;
+  pure fn insert(elem: E) -> PairingHeap<E>;
+  pure fn find_min() -> (Option<E>, PairingHeap<E>);
+  pure fn delete_min() -> (Option<E>, PairingHeap<E>);
+}
+
 
 pure fn Empty<E: Copy Eq Ord>() -> PairingHeap<E> {
   return Empty_;
