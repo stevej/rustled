@@ -35,14 +35,14 @@ pub trait Heap<E: Copy Eq Ord> {
 
 
 pure fn Empty<E: Copy Eq Ord>() -> PairingHeap<E> {
-  return Empty_;
+  Empty_
 }
 
 pure fn PairingHeap<E: Copy Eq Ord>(initial_value: E) -> PairingHeap<E> {
-  return PairingHeap_(@{
+  PairingHeap_(@{
     head: initial_value,
     rest: @Nil
-  });
+  })
 }
 
 impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
@@ -50,7 +50,7 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
     match (self, *other) {
       (Empty_, Empty_) => {true}
       (PairingHeap_(heapA), PairingHeap_(heapB)) => {
-        return (heapA.head == heapB.head) && (heapA.rest == heapB.rest);
+        (heapA.head == heapB.head) && (heapA.rest == heapB.rest)
       }
       //(Empty_, PairingHeap_(_)) => {false} // why are these unreachable?
       //(PairingHeap_(_), Empty) => {false}
@@ -67,7 +67,7 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
   }
 
   pure fn insert(e: E) -> PairingHeap<E> {
-    return self.merge(PairingHeap(e));
+    self.merge(PairingHeap(e))
   }
 
   pure fn find_min() -> Option<E> {
@@ -86,19 +86,19 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
 
   pure fn merge(other: PairingHeap<E>) -> PairingHeap<E> {
     match (self, other) {
-      (Empty_, b) => { return b; }
-      (a, Empty_) => { return a; }
+      (Empty_, b) => { b }
+      (a, Empty_) => { a }
       (x@PairingHeap_(heapA), y@PairingHeap_(heapB)) => {
         if (heapA.head.le(&heapB.head)) {
-          return PairingHeap_(@{
+          PairingHeap_(@{
             head: heapA.head,
             rest: @Cons(y, heapA.rest)
-          });
+          })
         } else {
-          return PairingHeap_(@{
+          PairingHeap_(@{
             head: heapB.head,
             rest: @Cons(x, heapB.rest)
-          });
+          })
         }
       }
     }
