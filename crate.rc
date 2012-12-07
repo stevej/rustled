@@ -17,9 +17,7 @@
 
 extern mod std;
 
-pub mod algorithms;
 pub mod tree;
-pub mod heap;
 pub mod lazy;
 pub mod pairing_heap;
 
