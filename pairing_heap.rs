@@ -22,9 +22,17 @@ pub enum PairingHeap<E: Copy Eq Ord> {
 pub trait Heap<E: Copy Eq Ord> {
   // I would really love for these to return Heaps but my knowledge
   // of Rust is too limited to make that work.
+
+  // returns true if the Heap is empty.
   pure fn is_empty() -> bool;
+
+  // returns a new Heap with the element inserted.
   pure fn insert(elem: E) -> PairingHeap<E>;
-  pure fn find_min() -> (Option<E>, PairingHeap<E>);
+
+  // returns the minimum element without a modified heap
+  pure fn find_min() -> Option<E>;
+
+  // returns the minimum element and a new Heap without that element.
   pure fn delete_min() -> (Option<E>, PairingHeap<E>);
 }
 
@@ -68,14 +76,13 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
     return self.merge(PairingHeap(e));
   }
 
-  pure fn find_min() -> (Option<E>, PairingHeap<E>) {
+  pure fn find_min() -> Option<E> {
     match self {
-      Empty_ => { return (None, self); }
-      p@PairingHeap_(heap) => { return (Some(heap.head), p); }
+      Empty_ => { None }
+      PairingHeap_(heap) => { Some(heap.head) }
     }
   }
 
-  // Deletes the minimum item without returning it
   pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
     match self {
       Empty_ => {(None, self)}
@@ -156,6 +163,9 @@ fn test_heap_insert_delete_interleved() {
   let v7 = v6.insert(7);
   let v8 = v7.insert(12);
 
+  let x = v8.find_min();
+  assert(x == Some(7));
+
   let (c, v9) = v8.delete_min();
   assert(c == Some(7));
 
@@ -177,6 +187,9 @@ fn test_heap_insert_delete_interleved() {
 fn test_immutable_heap() {
   let heap = PairingHeap(10);
   let x1 = heap.insert(1);
+
+  assert(x1.find_min() == Some(1));
+  assert(heap.find_min() == Some(10));
 
   let (a, v1) = heap.delete_min();
   assert(a == Some(10));
