@@ -123,6 +123,7 @@ fn test_heap_create() {
   assert(heap.is_empty());
 }
 
+#[test]
 fn test_heap_insert() {
   let v1 = PairingHeap(10);
   let v2 = v1.insert(1);
@@ -137,6 +138,7 @@ fn test_heap_insert() {
   assert(v5 == Empty_);
 }
 
+#[test]
 fn test_heap_insert_delete_interleved() {
   let v1 = PairingHeap(10);
   let (a, v2) = v1.delete_min();
@@ -170,6 +172,7 @@ fn test_heap_insert_delete_interleved() {
   assert(v13 == Empty_);
 }
 
+#[test]
 fn test_immutable_heap() {
   let heap = PairingHeap(10);
   let x1 = heap.insert(1);
