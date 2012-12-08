@@ -13,10 +13,10 @@ use std::list::{List, Cons, Nil};
  */
 pub enum PairingHeap<E: Copy Eq Ord> {
   Empty_,
-  PairingHeap_(@{
-    head: E,
-    rest: @List<PairingHeap<E>>
-  })
+  PairingHeap_(
+    E,
+    @List<PairingHeap<E>>
+  )
 }
 
 pub trait Heap<E: Copy Eq Ord> {
@@ -39,18 +39,18 @@ pure fn Empty<E: Copy Eq Ord>() -> PairingHeap<E> {
 }
 
 pure fn PairingHeap<E: Copy Eq Ord>(initial_value: E) -> PairingHeap<E> {
-  PairingHeap_(@{
-    head: initial_value,
-    rest: @Nil
-  })
+  PairingHeap_(
+    initial_value,
+    @Nil
+  )
 }
 
 impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
   pure fn eq(other: &PairingHeap<E>) -> bool {
     match (self, *other) {
       (Empty_, Empty_) => {true}
-      (PairingHeap_(heapA), PairingHeap_(heapB)) => {
-        (heapA.head == heapB.head) && (heapA.rest == heapB.rest)
+      (PairingHeap_(headA, restA), PairingHeap_(headB, restB)) => {
+        (headA == headB) && (restA == restB)
       }
       //(Empty_, PairingHeap_(_)) => {false} // why are these unreachable?
       //(PairingHeap_(_), Empty) => {false}
@@ -73,14 +73,14 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
   pure fn find_min() -> Option<E> {
     match self {
       Empty_ => { None }
-      PairingHeap_(heap) => { Some(heap.head) }
+      PairingHeap_(head, _) => { Some(head) }
     }
   }
 
   pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
     match self {
       Empty_ => {(None, self)}
-      PairingHeap_(heap) => {(Some(heap.head), self.merge_pairs(heap.rest))}
+      PairingHeap_(head, rest) => {(Some(head), self.merge_pairs(rest))}
     }
   }
 
@@ -88,17 +88,17 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
     match (self, other) {
       (Empty_, b) => { b }
       (a, Empty_) => { a }
-      (x@PairingHeap_(heapA), y@PairingHeap_(heapB)) => {
-        if (heapA.head.le(&heapB.head)) {
-          PairingHeap_(@{
-            head: heapA.head,
-            rest: @Cons(y, heapA.rest)
-          })
+      (x@PairingHeap_(headA, restA), y@PairingHeap_(headB, restB)) => {
+        if (headA.le(&headB)) {
+          PairingHeap_(
+            headA,
+            @Cons(y, restA)
+          )
         } else {
-          PairingHeap_(@{
-            head: heapB.head,
-            rest: @Cons(x, heapB.rest)
-          })
+          PairingHeap_(
+            headB,
+            @Cons(x, restB)
+          )
         }
       }
     }
