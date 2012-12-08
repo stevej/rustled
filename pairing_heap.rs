@@ -13,7 +13,7 @@ use std::list::{List, Cons, Nil};
  */
 pub enum PairingHeap<E: Copy Eq Ord> {
   Empty_,
-  PairingHeap_(
+  PairingHeapCell(
     E,
     @List<PairingHeap<E>>
   )
@@ -39,7 +39,7 @@ pure fn Empty<E: Copy Eq Ord>() -> PairingHeap<E> {
 }
 
 pure fn PairingHeap<E: Copy Eq Ord>(initial_value: E) -> PairingHeap<E> {
-  PairingHeap_(
+  PairingHeapCell(
     initial_value,
     @Nil
   )
@@ -49,11 +49,11 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
   pure fn eq(other: &PairingHeap<E>) -> bool {
     match (self, *other) {
       (Empty_, Empty_) => {true}
-      (PairingHeap_(headA, restA), PairingHeap_(headB, restB)) => {
+      (PairingHeapCell(headA, restA), PairingHeapCell(headB, restB)) => {
         (headA == headB) && (restA == restB)
       }
-      //(Empty_, PairingHeap_(_)) => {false} // why are these unreachable?
-      //(PairingHeap_(_), Empty) => {false}
+      //(Empty_, PairingHeapCell(_)) => {false} // why are these unreachable?
+      //(PairingHeapCell(_), Empty) => {false}
       (_, _) => {false}
     }
   }
@@ -73,14 +73,14 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
   pure fn find_min() -> Option<E> {
     match self {
       Empty_ => { None }
-      PairingHeap_(head, _) => { Some(head) }
+      PairingHeapCell(head, _) => { Some(head) }
     }
   }
 
   pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
     match self {
       Empty_ => {(None, self)}
-      PairingHeap_(head, rest) => {(Some(head), self.merge_pairs(rest))}
+      PairingHeapCell(head, rest) => {(Some(head), self.merge_pairs(rest))}
     }
   }
 
@@ -88,14 +88,14 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
     match (self, other) {
       (Empty_, b) => { b }
       (a, Empty_) => { a }
-      (x@PairingHeap_(headA, restA), y@PairingHeap_(headB, restB)) => {
+      (x@PairingHeapCell(headA, restA), y@PairingHeapCell(headB, restB)) => {
         if (headA.le(&headB)) {
-          PairingHeap_(
+          PairingHeapCell(
             headA,
             @Cons(y, restA)
           )
         } else {
-          PairingHeap_(
+          PairingHeapCell(
             headB,
             @Cons(x, restB)
           )
