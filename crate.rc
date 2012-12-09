@@ -21,5 +21,6 @@ pub mod tree;
 pub mod lazy;
 pub mod pairing_heap;
 pub mod red_black_tree;
+pub mod ctpop;
 
 mod test_tree;
