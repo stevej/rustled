@@ -106,7 +106,6 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
 
   pure fn merge_pairs(heaps: @List<PairingHeap<E>>) -> PairingHeap<E> {
     match heaps {
-      // Why are @-signs required for pattern matching here?
       @Cons(a, @Cons(b, xs)) => {a.merge(b).merge(self.merge_pairs(xs))}
       @Cons(elem, @Nil) => {elem}
       @Nil => {Empty()}
@@ -126,6 +125,15 @@ fn test_heap_create() {
 }
 
 #[test]
+fn test_delete_last_item() {
+  let v1 = PairingHeap(1);
+  assert(!v1.is_empty());
+
+  let (_, v2) = v1.delete_min();
+  assert(v2.is_empty());
+}
+
+#[test]
 fn test_heap_insert() {
   let v1 = PairingHeap(10);
   let v2 = v1.insert(1);
@@ -141,7 +149,7 @@ fn test_heap_insert() {
 }
 
 #[test]
-fn test_heap_insert_delete_interleved() {
+fn test_heap_insert_delete_interleaved() {
   let v1 = PairingHeap(10);
   let (a, v2) = v1.delete_min();
   assert(a == Some(10));
