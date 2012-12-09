@@ -7,14 +7,13 @@ pub trait Map<K: Copy Eq Ord, V: Copy> {
   pure fn delete(k: K) -> self;
 }
 
-// private
 enum RBColor {
   Red,
   Black
 }
 
 pub enum RBMap<K: Copy Eq Ord, V: Copy> {
-  //   color    left         k  value      right
+  //   color    left         k  value       right
   Tree(RBColor, @RBMap<K,V>, K, @Option<V>, @RBMap<K,V>),
   Leaf
 }
