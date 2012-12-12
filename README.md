@@ -9,3 +9,5 @@
 `red_black_tree.rs` - A purely functional red-black tree.
 
 `ctpop.rs` - A Rust implementation of the population count (native CTPOP instruction)
+
+`fnv1a.rs` - A Rust implementation of the FNV 1a hashing algorithm.
