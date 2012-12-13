@@ -5,6 +5,7 @@ pub trait Map<K: Copy Eq Ord, V: Copy> {
   pure fn get(k: K) -> @Option<V>;
   pure fn put(k: K, v: V) -> self;
   pure fn delete(k: K) -> self;
+  pure fn traverse(f: fn((&K), (@Option<V>)));
 }
 
 enum RBColor {
@@ -43,6 +44,18 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
       }
     }
   }
+
+  /// Visit all pairs in the map in order.
+  pure fn traverse(f: fn((&K), (@Option<V>))) {
+    match *self {
+      Leaf => (),
+      Tree(_, left, key, maybe_value, right) => {
+        left.traverse(f);
+        f(&key, maybe_value);
+        right.traverse(f);
+      }
+    }
+}
 
   pure fn put(k : K, v : V) -> @RBMap<K, V> {
     self.modifiedWith(k, |m,n| { @Some(v) })
@@ -94,7 +107,6 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
   }
 }
 
-
 #[test]
 fn test_rb_tree_create() {
   let v1 = RBMap("stevej", 150);
@@ -106,4 +118,21 @@ fn test_rb_tree_create() {
   let v3 = v2.delete("stevej");
   assert(v3.get("stevej") == @None);
   assert(v3.get("thatstacy") == @Some(167));
+}
+
+#[test]
+fn test_traverse() {
+  let v1 = RBMap(1, 0);
+  let v2 = v1.put(4, 0);
+  let v3 = v2.put(3, 0);
+  let v4 = v3.put(5, 0);
+  let v5 = v4.put(2, 0);
+
+  let n = @mut 1;
+
+  fn t(n: @mut int, k: int, _v: Option<int>) {
+    assert (*n == k); *n += 1;
+  }
+
+  v5.traverse(|x,y| t(n, *x, *y));
 }
