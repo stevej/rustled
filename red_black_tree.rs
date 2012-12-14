@@ -58,11 +58,11 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
 }
 
   pure fn put(k : K, v : V) -> @RBMap<K, V> {
-    self.modifiedWith(k, |m,n| { @Some(v) })
+    self.modifiedWith(k, @Some(v))
   }
 
   pure fn delete(k: K) -> @RBMap<K, V> {
-    self.modifiedWith(k, |m,n| { @None })
+    self.modifiedWith(k, @None)
   }
 
   priv pure fn blacken(n : @RBMap<K, V>) -> @RBMap<K, V> {
@@ -72,8 +72,8 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
     }
   }
 
-  priv pure fn modifiedWith (k : K, f : fn(K, @Option<V>) -> @Option<V>) -> @RBMap<K, V> {
-    self.blacken(self.modWith(k, f))
+  priv pure fn modifiedWith (k : K, new_value: @Option<V>) -> @RBMap<K, V> {
+    self.blacken(self.modWith(k, new_value))
   }
 
   priv pure fn balance (c : RBColor, l : @RBMap<K,V>, k : K, v : @Option<V>, r : @RBMap<K,V>) -> @RBMap<K,V> {
@@ -91,16 +91,16 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
     }
   }
 
-  priv pure fn modWith (k : K, f : fn(K, @Option<V>) -> @Option<V>) -> @RBMap<K, V> {
+  priv pure fn modWith (k : K, new_value: @Option<V>) -> @RBMap<K, V> {
     match self {
-      @Leaf => @Tree(Red, self, k, f(k, @None), self),
-      @Tree(color, left, key, maybe_value, right) => {
+      @Leaf => @Tree(Red, self, k, new_value, self),
+      @Tree(color, left, key, original_value, right) => {
         if (k.lt(&key)) {
-          self.balance(color, left.modWith(k, f), key, maybe_value, right)
+          self.balance(color, left.modWith(k, new_value), key, original_value, right)
         } else if (k == key) {
-          @Tree(color, left, k, f(key, maybe_value), right)
+          @Tree(color, left, k, new_value, right)
         } else {
-          self.balance(color, left, key, maybe_value, right.modWith(k, f))
+          self.balance(color, left, key, original_value, right.modWith(k, new_value))
         }
       }
     }
