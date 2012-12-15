@@ -9,7 +9,7 @@ const SKFF : u32 = 0xFF00FF;
  *
  * Currently designed for a 32-bit unsigned integer.
  *
- * Many chips have a CTPOP instruction available and would be an order
+ * Many chips have a POPCNT instruction available and would be an order
  * of magnitude speed improvement.
  */
 pure fn ctpop32(map : u32) -> u32 {
