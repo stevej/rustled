@@ -1,3 +1,8 @@
+const SK5  : u32 = 0x55555555;
+const SK3  : u32 = 0x33333333;
+const SKF0 : u32 = 0xF0F0F0F;
+const SKFF : u32 = 0xFF00FF;
+
 /**
  * Count the Population of an unsigned integer. Returns how many bits are
  * set to 1.
@@ -8,11 +13,6 @@
  * of magnitude speed improvement.
  */
 pure fn ctpop32(map : u32) -> u32 {
-  // Code smell: these constants should not be defined in the function.
-  let SK5  : u32 = 0x55555555;
-  let SK3  : u32 = 0x33333333;
-  let SKF0 : u32 = 0xF0F0F0F;
-  let SKFF : u32 = 0xFF00FF;
   let mut Map = copy map;
 
   Map-=((Map>>1)&SK5);
