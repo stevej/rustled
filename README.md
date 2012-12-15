@@ -11,3 +11,5 @@
 `ctpop.rs` - A Rust implementation of the population count (native CTPOP instruction)
 
 `fnv1a.rs` - A Rust implementation of the FNV 1a hashing algorithm.
+
+`lzc.rs` - Rust implementation of leading zero count.

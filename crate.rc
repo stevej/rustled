@@ -23,5 +23,6 @@ pub mod pairing_heap;
 pub mod red_black_tree;
 pub mod ctpop;
 pub mod fnv1a;
+pub mod lzc;
 
 mod test_tree;
