@@ -1,7 +1,7 @@
 use core::cmp::{Eq, Ord};
 
 
-pub trait Map<K: Copy Eq Ord, V: Copy> {
+pub trait PersistentMap<K: Copy Eq Ord, V: Copy> {
   pure fn get(k: K) -> @Option<V>;
   pure fn put(k: K, v: V) -> self;
   pure fn delete(k: K) -> self;
@@ -29,7 +29,7 @@ pure fn RBMap<K: Copy Eq Ord, V: Copy>(key: K, value: V) -> @RBMap<K, V> {
  * A port of Matt Might's Scala port of Okasaki's RB Trees: http://matt.might.net/articles/implementation-of-immutable-purely-functional-okasaki-red-black-tree-maps-in-scala/RBMap.scala
  * which was itself a port of http://www.ccs.neu.edu/course/cs3500wc/jfp99redblack.pdf
  */
-impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
+impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
   pure fn get(k: K) -> @Option<V> {
     match self {
       @Leaf => @None,
@@ -55,7 +55,7 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : Map<K, V> {
         right.traverse(f);
       }
     }
-}
+  }
 
   pure fn put(k : K, v : V) -> @RBMap<K, V> {
     self.modifiedWith(k, @Some(v))
