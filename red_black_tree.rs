@@ -80,12 +80,16 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
     match (c,l,k,v,r) {
       (Black,@Tree(Red,@Tree(Red,a,xK,xV,b),yK,yV,c),zK,zV,d) =>
         @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
+
       (Black,@Tree(Red,a,xK,xV,@Tree(Red,b,yK,yV,c)),zK,zV,d) =>
         @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
+
       (Black,a,xK,xV,@Tree(Red,@Tree(Red,b,yK,yV,c),zK,zV,d)) =>
         @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
+
       (Black,a,xK,xV,@Tree(Red,b,yK,yV,@Tree(Red,c,zK,zV,d))) =>
         @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
+
       (c,a,xK,xV,b) =>
         @Tree(c,a,xK,xV,b)
     }
@@ -110,14 +114,19 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
 #[test]
 fn test_rb_tree_create() {
   let v1 = RBMap("stevej", 150);
-  let v2 = v1.put("thatstacy", 167);
+  let v2 = v1.put("thatstacy", 187);
 
   assert(v2.get("stevej") == @Some(150));
-  assert(v2.get("thatstacy") == @Some(167));
+  assert(v2.get("thatstacy") == @Some(187));
 
   let v3 = v2.delete("stevej");
   assert(v3.get("stevej") == @None);
-  assert(v3.get("thatstacy") == @Some(167));
+  assert(v3.get("thatstacy") == @Some(187));
+
+  let v4 = v2.put("jeremy", 16);
+  assert(v4.get("jeremy") == @Some(16));
+  assert(v4.get("stevej") == @Some(150));
+  assert(v4.get("thatstacy") == @Some(187));
 }
 
 #[test]
