@@ -22,6 +22,44 @@ pure fn RBMap<K: Copy Eq Ord, V: Copy>(key: K, value: V) -> @RBMap<K, V> {
   @Tree(Red, @Leaf, key, @Some(value), @Leaf)
 }
 
+impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
+  pure fn modify(k: K, new_value: @Option<V>) -> @RBMap<K, V> {
+    match self {
+      @Leaf => @Tree(Red, self, k, new_value, self),
+      @Tree(color, left, key, original_value, right) => {
+        if (k.lt(&key)) {
+          self.balanceLeft(color, left.modify(k, new_value), key, original_value, right)
+        } else if (k == key) {
+          @Tree(color, left, k, new_value, right)
+        } else {
+          self.balanceRight(color, left, key, original_value, right.modify(k, new_value))
+        }
+      }
+    }
+  }
+
+  pure fn balanceLeft(c: RBColor, l: @RBMap<K,V>, k: K, v: @Option<V>, r: @RBMap<K,V>) -> @RBMap<K,V> {
+    match (c, l, k, v, r) {
+      (Black,@Tree(Red,@Tree(Red,a,xK,xV,b),yK,yV,c),zK,zV,d) =>
+        @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
+      (c,a,xK,xV,b) =>
+        @Tree(c,a,xK,xV,b)
+    }
+  }
+
+  pure fn balanceRight(c: RBColor, l: @RBMap<K,V>, k: K, v: @Option<V>, r: @RBMap<K,V>) -> @RBMap<K,V> {
+    match (c, l, k, v, r) {
+      (Black, @Tree(Red, t1, k1, v1, t2), k0, v0, @Tree(Red, t3, k2, v2, t4)) =>
+        @Tree(Red, @Tree(Black, t1, k1, v1, t2), k0, v0, @Tree(Black, t3, k2, v2, t4)),
+      (c, l, k, v, @Tree(Red, t1, k1, v1, t2)) =>
+        @Tree(c, @Tree(Red, l, k, v, t1), k1, v1, t2),
+      (c,a,xK,xV,b) =>
+        @Tree(c,a,xK,xV,b)
+    }
+  }
+}
+
+
 /**
  * A purely functional Left-Leaning Red-Black Tree.
  */
@@ -47,41 +85,6 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
 
   pure fn delete(k: K) -> @RBMap<K, V> {
     self.modify(k, @None)
-  }
-
-  priv pure fn modify(k: K, new_value: @Option<V>) -> @RBMap<K, V> {
-    match self {
-      @Leaf => @Tree(Red, self, k, new_value, self),
-      @Tree(color, left, key, original_value, right) => {
-        if (k.lt(&key)) {
-          self.balanceLeft(color, left.modify(k, new_value), key, original_value, right)
-        } else if (k == key) {
-          @Tree(color, left, k, new_value, right)
-        } else {
-          self.balanceRight(color, left, key, original_value, right.modify(k, new_value))
-        }
-      }
-    }
-  }
-
-  priv pure fn balanceLeft(c: RBColor, l: @RBMap<K,V>, k: K, v: @Option<V>, r: @RBMap<K,V>) -> @RBMap<K,V> {
-    match (c, l, k, v, r) {
-      (Black,@Tree(Red,@Tree(Red,a,xK,xV,b),yK,yV,c),zK,zV,d) =>
-        @Tree(Red,@Tree(Black,a,xK,xV,b),yK,yV,@Tree(Black,c,zK,zV,d)),
-      (c,a,xK,xV,b) =>
-        @Tree(c,a,xK,xV,b)
-    }
-  }
-
-  priv pure fn balanceRight(c: RBColor, l: @RBMap<K,V>, k: K, v: @Option<V>, r: @RBMap<K,V>) -> @RBMap<K,V> {
-    match (c, l, k, v, r) {
-      (Black, @Tree(Red, t1, k1, v1, t2), k0, v0, @Tree(Red, t3, k2, v2, t4)) =>
-        @Tree(Red, @Tree(Black, t1, k1, v1, t2), k0, v0, @Tree(Black, t3, k2, v2, t4)),
-      (c, l, k, v, @Tree(Red, t1, k1, v1, t2)) =>
-        @Tree(c, @Tree(Red, l, k, v, t1), k1, v1, t2),
-      (c,a,xK,xV,b) =>
-        @Tree(c,a,xK,xV,b)
-    }
   }
 }
 
