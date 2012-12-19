@@ -22,7 +22,7 @@ pure fn RBMap<K: Copy Eq Ord, V: Copy>(key: K, value: V) -> @RBMap<K, V> {
   @Tree(Red, @Leaf, key, @Some(value), @Leaf)
 }
 
-impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
+priv impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
   pure fn modify(k: K, new_value: @Option<V>) -> @RBMap<K, V> {
     match self {
       @Leaf => @Tree(Red, self, k, new_value, self),
