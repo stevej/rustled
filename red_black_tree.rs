@@ -1,11 +1,10 @@
 use core::cmp::{Eq, Ord};
-
+use iter::BaseIter;
 
 pub trait PersistentMap<K: Copy Eq Ord, V: Copy> {
   pure fn get(k: K) -> @Option<V>;
   pure fn put(k: K, v: V) -> self;
   pure fn delete(k: K) -> self;
-  pure fn traverse(f: fn((&K), (@Option<V>)));
 }
 
 enum RBColor {
@@ -38,18 +37,6 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
         } else {
           maybe_value
         }
-      }
-    }
-  }
-
-  /// Visit all pairs in the map in order.
-  pure fn traverse(f: fn((&K), (@Option<V>))) {
-    match *self {
-      Leaf => (),
-      Tree(_, left, key, maybe_value, right) => {
-        left.traverse(f);
-        f(&key, maybe_value);
-        right.traverse(f);
       }
     }
   }
@@ -96,8 +83,28 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
         @Tree(c,a,xK,xV,b)
     }
   }
-
 }
+
+impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: iter::BaseIter<(&K, &V)> {
+  pure fn size_hint() -> Option<uint> {
+    None
+  }
+
+  pure fn each(f: fn(&(&K, &V)) -> bool) {
+    match self {
+      Leaf => (),
+      Tree(_, left, key, maybe_value, right) => {
+        left.each(f);
+        match maybe_value {
+          @Some(value) => f(&(&key, &value)),
+          @None => false,
+        };
+        right.each(f);
+      }
+    }
+  }
+}
+
 
 #[test]
 fn test_rb_tree() {
@@ -124,7 +131,7 @@ fn test_rb_tree() {
 }
 
 #[test]
-fn test_traverse() {
+fn test_base_iter_each() {
   let v1 = RBMap(1, 0);
   let v2 = v1.put(4, 0);
   let v3 = v2.put(3, 0);
@@ -133,9 +140,15 @@ fn test_traverse() {
 
   let n = @mut 1;
 
-  fn t(n: @mut int, k: int, _v: Option<int>) {
-    assert (*n == k); *n += 1;
+  fn t(n: @mut int, kv: &(&int, &int)) -> bool{
+    match kv {
+      &(k, _) => {
+        assert (*n == *k);
+        *n += 1;
+      }
+    }
+    false
   }
 
-  v5.traverse(|x,y| t(n, *x, *y));
+  v5.each(|z| t(n, z));
 }
