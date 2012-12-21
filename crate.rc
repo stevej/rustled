@@ -24,5 +24,6 @@ pub mod red_black_tree;
 pub mod ctpop;
 pub mod fnv1a;
 pub mod lzc;
+pub mod list_zipper;
 
 mod test_tree;

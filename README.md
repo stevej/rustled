@@ -6,10 +6,12 @@
 
 `tree.rs` - A purely functional binary search tree. Currently lacks delete.
 
-`red_black_tree.rs` - A purely functional red-black tree.
+`red_black_tree.rs` - A purely functional left-leaning red-black tree.
 
 `ctpop.rs` - A Rust implementation of the population count (native CTPOP instruction)
 
 `fnv1a.rs` - A Rust implementation of the FNV 1a hashing algorithm.
 
-`lzc.rs` - Rust implementation of leading zero count.
+`lzc.rs` - A Rust implementation of leading zero count.
+
+`list_zipper.rs` - An implementation of Huet Zippers for managed Lists.
