@@ -11,6 +11,7 @@ use std::list::{List, Cons, Nil};
  * This implementation is a port of the Standard ML found in Okasaki's
  * Purely Functional Data Structures.
  */
+#[deriving_eq]
 pub enum PairingHeap<E: Copy Eq Ord> {
   Empty_,
   PairingHeapCell(
@@ -45,6 +46,7 @@ pure fn PairingHeap<E: Copy Eq Ord>(initial_value: E) -> PairingHeap<E> {
   )
 }
 
+/*
 impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
   pure fn eq(other: &PairingHeap<E>) -> bool {
     match (self, *other) {
@@ -59,31 +61,9 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Eq {
   }
 
   pure fn ne(other: &PairingHeap<E>) -> bool { !(self).eq(other) }
-}
+}*/
 
-impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
-  pure fn is_empty(&self) -> bool {
-    *self == Empty_
-  }
-
-  pure fn insert(e: E) -> PairingHeap<E> {
-    self.merge(PairingHeap(e))
-  }
-
-  pure fn find_min() -> Option<E> {
-    match self {
-      Empty_ => { None }
-      PairingHeapCell(head, _) => { Some(head) }
-    }
-  }
-
-  pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
-    match self {
-      Empty_ => {(None, self)}
-      PairingHeapCell(head, rest) => {(Some(head), self.merge_pairs(rest))}
-    }
-  }
-
+impl<E: Copy Eq Ord> PairingHeap<E> {
   pure fn merge(other: PairingHeap<E>) -> PairingHeap<E> {
     match (self, other) {
       (Empty_, b) => { b }
@@ -109,6 +89,31 @@ impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
       @Cons(a, @Cons(b, xs)) => {a.merge(b).merge(self.merge_pairs(xs))}
       @Cons(elem, @Nil) => {elem}
       @Nil => {Empty()}
+    }
+  }
+
+}
+
+impl<E: Copy Eq Ord> PairingHeap<E> : Heap<E> {
+  pure fn is_empty(&self) -> bool {
+    *self == Empty_
+  }
+
+  pure fn insert(e: E) -> PairingHeap<E> {
+    self.merge(PairingHeap(e))
+  }
+
+  pure fn find_min() -> Option<E> {
+    match self {
+      Empty_ => { None }
+      PairingHeapCell(head, _) => { Some(head) }
+    }
+  }
+
+  pure fn delete_min() -> (Option<E>, PairingHeap<E>) {
+    match self {
+      Empty_ => {(None, self)}
+      PairingHeapCell(head, rest) => {(Some(head), self.merge_pairs(rest))}
     }
   }
 }
