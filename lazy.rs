@@ -25,7 +25,7 @@ impl<T: Copy> Lazy<T> {
     match self.value {
       Some(value) => { return value; }
       None => {
-        let result = self.code();
+        let result = (self.code)();
         self.value = Some(result);
 
         return result;
