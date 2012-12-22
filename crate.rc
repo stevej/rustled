@@ -1,19 +1,13 @@
 #[link(name = "algorithms",
        vers = "0.1",
        uuid = "F5F3EB93-54C8-4530-802B-9F3DB4188A45",
-       url = "https://github.com/stevej/rust-algorithms")];
+       url = "https://github.com/stevej/rust-algorithms",
+       author = "stevej")];
 
 #[comment = "Rust algorithms library"];
 #[license = "Apache 2"];
 #[crate_type = "lib"];
-
-#[allow(unused_imports)];
-#[allow(implicit_copies)];
-#[allow(deprecated_pattern)];
-
-#[allow(structural_records)];
-#[allow(deprecated_mode)];
-#[allow(non_implicitly_copyable_typarams)];
+#[warn(non_camel_case_types)];
 
 extern mod std;
 
@@ -21,9 +15,9 @@ pub mod tree;
 pub mod lazy;
 pub mod pairing_heap;
 pub mod red_black_tree;
-pub mod ctpop;
+mod ctpop;
 pub mod fnv1a;
-pub mod lzc;
+//mod lzc;
 pub mod list_zipper;
 
 mod test_tree;
