@@ -89,12 +89,12 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
 }
 
 impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: iter::BaseIter<(&K, &V)> {
-  pure fn size_hint() -> Option<uint> {
+  pure fn size_hint(&self) -> Option<uint> {
     None
   }
 
-  pure fn each(f: fn(&(&K, &V)) -> bool) {
-    match self {
+  pure fn each(&self, f: fn(&(&K, &V)) -> bool) {
+    match *self {
       Leaf => (),
       Tree(_, left, key, maybe_value, right) => {
         left.each(f);
