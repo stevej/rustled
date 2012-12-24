@@ -143,10 +143,10 @@ fn test_base_iter_each() {
 
   let n = @mut 1;
 
-  fn t(n: @mut int, kv: &(&int, &int)) -> bool{
+  fn t(n: @mut int, kv: (int, int)) -> bool{
     match kv {
-      &(k, _) => {
-        assert (*n == *k);
+      (k, _) => {
+        assert (*n == k);
         *n += 1;
       }
     }
