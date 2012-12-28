@@ -13,11 +13,11 @@ extern mod std;
 
 pub mod tree;
 pub mod lazy;
-pub mod pairing_heap;
+//pub mod pairing_heap;
 pub mod red_black_tree;
 mod ctpop;
 pub mod fnv1a;
 //mod lzc;
-pub mod list_zipper;
+//pub mod list_zipper;
 
 mod test_tree;
