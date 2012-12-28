@@ -88,18 +88,18 @@ impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> : PersistentMap<K, V> {
   }
 }
 
-trait BareIter<A> {
-  pure fn each(&self, blk: fn(v: A) -> bool);
-}
+impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: BaseIter<(&K, &V)> {
+  pure fn size_hint(&self) -> Option<uint> {
+    None
+  }
 
-impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: BareIter<(K, V)> {
-  pure fn each(&self, f: fn((K, V)) -> bool) {
+  pure fn each(&self, f: fn(&(&self/K, &self/V)) -> bool) {
     match *self {
       Leaf => (),
       Tree(_, left, key, maybe_value, right) => {
         left.each(f);
         match maybe_value {
-          Some(value) => f((key, value)),
+          Some(value) => f(&(&key, &value)),
           None => false,
         };
         right.each(f);
@@ -124,7 +124,7 @@ fn test_rb_tree() {
   let v4 = v2.put("jeremy", 16);
 
   let v5 = v4.put("ev", 20);
-  let v6 = v5.put("zhana", 51573);
+  let v6 = v5.put("zhanna", 51573);
 
   assert(v6.get("jeremy") == Some(16));
   assert(v6.get("stevej") == Some(150));
@@ -143,10 +143,10 @@ fn test_base_iter_each() {
 
   let n = @mut 1;
 
-  fn t(n: @mut int, kv: (int, int)) -> bool{
+  fn t(n: @mut int, kv: &(&int, &int)) -> bool{
     match kv {
-      (k, _) => {
-        assert (*n == k);
+      &(k, _) => {
+        assert (*n == *k);
         *n += 1;
       }
     }
