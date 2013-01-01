@@ -96,11 +96,18 @@ impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: BaseIter<(&K, &V)> {
   pure fn each(&self, f: fn(&(&self/K, &self/V)) -> bool) {
     match *self {
       Leaf => (),
-      Tree(_, left, key, maybe_value, right) => {
+      Tree(_, ref left, ref key, ref maybe_value, ref right) => {
+        let left: &self/@RBMap<K,V> = left;
+        let key: &self/K = key;
+        let maybe_value: &self/Option<V> = maybe_value;
+        let right: &self/@RBMap<K,V> = right;
         left.each(f);
-        match maybe_value {
-          Some(value) => f(&(&key, &value)),
-          None => false,
+        match *maybe_value {
+            Some(ref value) => {
+                let value: &self/V = value;
+                f(&(key, value));
+            }
+            None => ()
         };
         right.each(f);
       }
