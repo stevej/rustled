@@ -137,7 +137,7 @@ fn test_rb_tree() {
   assert(v6.get("stevej") == Some(150));
   assert(v6.get("thatstacy") == Some(187));
   assert(v6.get("ev") == Some(20));
-  assert(v6.get("zhana") == Some(51573));
+  assert(v6.get("zhanna") == Some(51573));
 }
 
 #[test]
