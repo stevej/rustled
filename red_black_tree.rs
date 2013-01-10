@@ -22,7 +22,7 @@ pure fn RBMap<K: Copy Eq Ord, V: Copy>(key: K, value: V) -> @RBMap<K, V> {
   @Tree(Red, @Leaf, key, Some(value), @Leaf)
 }
 
-priv impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
+impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
   pure fn modify(k: K, new_value: Option<V>) -> @RBMap<K, V> {
     match self {
       @Leaf => @Tree(Red, self, k, copy new_value, self),
@@ -55,6 +55,13 @@ priv impl<K: Copy Eq Ord, V: Copy> @RBMap<K, V> {
         @Tree(c, @Tree(Red, l, k, v, t1), k1, v1, t2),
       (c,a,xK,xV,b) =>
         @Tree(c,a,xK,xV,b)
+    }
+  }
+
+  pure fn real_each(f: fn(&(&self/K, &self/V)) -> bool, descend: bool) {
+    match *self {
+      Leaf => (),
+      Tree(_, left, key, maybe_value, right) => ()
     }
   }
 }
@@ -97,18 +104,30 @@ impl<K: Copy Eq Ord, V: Copy> RBMap<K, V>: BaseIter<(&K, &V)> {
     match *self {
       Leaf => (),
       Tree(_, ref left, ref key, ref maybe_value, ref right) => {
+        self.real_each(f, true);
         let left: &self/@RBMap<K,V> = left;
         let key: &self/K = key;
+        unsafe {
+          io::println(fmt!("entering for %?", *key));
+        }
         let maybe_value: &self/Option<V> = maybe_value;
         let right: &self/@RBMap<K,V> = right;
         left.each(f);
         match *maybe_value {
-            Some(ref value) => {
-                let value: &self/V = value;
-                f(&(key, value));
+          Some(ref value) => {
+            let value: &self/V = value;
+            if !f(&(key, value)) {
+              unsafe {
+                io::println(fmt!("exiting early on key: %?", *key));
+              }
             }
-            None => ()
+          }
+          None => ()
         };
+        unsafe {
+          io::println(fmt!("descending key %?", *key));
+        }
+
         right.each(f);
       }
     }
@@ -150,15 +169,42 @@ fn test_base_iter_each() {
 
   let n = @mut 1;
 
-  fn t(n: @mut int, kv: &(&int, &int)) -> bool{
+  fn t(n: @mut int, kv: &(&int, &int)) -> bool {
     match kv {
       &(k, _) => {
         assert (*n == *k);
         *n += 1;
       }
     }
-    false
+    return true;
   }
 
   v5.each(|z| t(n, z));
+}
+
+#[test]
+fn test_for() {
+  let v1 = RBMap(1, 0);
+  let v2 = v1.put(4, 0);
+  let v3 = v2.put(3, 0);
+  let v4 = v3.put(5, 0);
+  let v5 = v4.put(2, 0);
+
+  let n = @mut 1;
+
+  fn t(n: @mut int, kv: &(&int, &int)) -> bool {
+    match kv {
+      &(k, _) => {
+        if (*k == 3) {
+          return false;
+        } else {
+          *n += 1;
+        }
+      }
+    }
+    true
+  }
+  v5.each(|z| t(n, z));
+
+  assert(*n == 5);
 }
